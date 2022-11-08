@@ -9,9 +9,9 @@ import asyncio
 """
 INTEGRACIJSKO_VRIJEME = 10
 BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
-BROJ_MJERENJA = 3
-VREMENSKI_ODMAK = 0
-IZLAZNA_MAPA = ".data/"
+BROJ_MJERENJA = 3           # \
+VREMENSKI_ODMAK = 0         #  | postaviti u glavnom programu!
+IZLAZNA_MAPA = ".data/"     # /
 
 
 
@@ -36,8 +36,8 @@ def path(enum=True, timestamp=True):
     foo_path += ".csv"
     return foo_path
 
-async def demo(akvizicija,blenda,n,razmak,csv):
-    pass
+async def demo(logger):
+    os.system(f"demo.py --integration-time-ms={INTEGRACIJSKO_VRIJEME} --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} --max=1 --outfile=.buffer.csv --ascii-art --log-level={logger}")
 
 if __name__ == "__main__":
     log_level = "WARNING"
