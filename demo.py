@@ -20,12 +20,12 @@ import os
 import re
 import sys
 import time
-import numpy
 import signal
-import psutil
 import logging
-import datetime
 import argparse
+import datetime
+import numpy
+import psutil
 
 import wasatch
 from wasatch import utils
@@ -52,10 +52,11 @@ class WasatchDemo(object):
         self.logger  = None
         self.outfile = None
         self.exiting = False
+        self.reading_count = None
 
         self.args = self.parse_args(argv)
 
-        self.logger = applog.MainLogger(self.args.log_level)
+        self.logger = applog.MainLogger(self.args.log_level, logfile=".wasatch_applog.txt")
         log.info("Wasatch.PY version %s", wasatch.__version__)
 
     ############################################################################
@@ -80,13 +81,13 @@ class WasatchDemo(object):
         # parse argv into dict
         args = parser.parse_args(argv[1:])
         if args.version:
-            print("Wasatch.PY %s" % wasatch.__version__)
+            log.info("Wasatch.PY %s", wasatch.__version__)
             sys.exit(0)
 
         # normalize log level
         args.log_level = args.log_level.upper()
         if not re.match("^(DEBUG|INFO|ERROR|WARNING|CRITICAL)$", args.log_level):
-            print("Invalid log level: %s (defaulting to INFO)" % args.log_level)
+            log.info("Invalid log level: %s (defaulting to INFO)", args.log_level)
             args.log_level = "INFO"
 
         return args
@@ -111,8 +112,8 @@ class WasatchDemo(object):
             self.bus = WasatchBus(use_sim = False)
 
         if not self.bus.device_ids:
-            print("No Wasatch USB spectrometers found.")
-            return 
+            log.warning("No Wasatch USB spectrometers found.")
+            return
 
         device_id = self.bus.device_ids[0]
         log.debug("connect: trying to connect to %s", device_id)
@@ -123,7 +124,7 @@ class WasatchDemo(object):
             log.debug("instantiating WasatchDeviceWrapper (non-blocking)")
             device = WasatchDeviceWrapper(
                 device_id = device_id,
-                log_queue = self.logger.log_queue,
+                # log_queue = self.logger.log_queue,
                 log_level = self.args.log_level)
         else:
             log.debug("instantiating WasatchDevice (blocking)")
@@ -132,8 +133,8 @@ class WasatchDemo(object):
             else:
                 device = OceanDevice(device_id)
 
-        ok = device.connect()
-        if not ok:
+        o_k = device.connect()
+        if not o_k:
             log.critical("connect: can't connect to %s", device_id)
             return
 
@@ -161,7 +162,7 @@ class WasatchDemo(object):
         # initialize outfile if one was specified
         if self.args.outfile:
             try:
-                self.outfile = open(self.args.outfile, "w")
+                self.outfile = open(self.args.outfile, "w", encoding="utf-8")
                 self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavelengths))
             except:
                 log.error("Error initializing %s", self.args.outfile)
@@ -238,7 +239,7 @@ class WasatchDemo(object):
             spectrum = reading.spectrum
 
         if self.args.ascii_art:
-            print("\n".join(wasatch.utils.ascii_spectrum(spectrum, rows=20, cols=80, x_axis=self.device.settings.wavelengths, x_unit="nm")))
+            log.info("\n".join(wasatch.utils.ascii_spectrum(spectrum, rows=20, cols=80, x_axis=self.device.settings.wavelengths, x_unit="nm")))
         else:
             spectrum_min = numpy.amin(spectrum)
             spectrum_max = numpy.amax(spectrum)
@@ -246,7 +247,7 @@ class WasatchDemo(object):
             spectrum_std = numpy.std (spectrum)
             size_in_bytes = psutil.Process(os.getpid()).memory_info().rss
 
-            print("Reading: %4d  Detector: %5.2f degC  Min: %8.2f  Max: %8.2f  Avg: %8.2f  StdDev: %8.2f  Memory: %11d" % (
+            log.info("Reading: %4d  Detector: %5.2f degC  Min: %8.2f  Max: %8.2f  Avg: %8.2f  StdDev: %8.2f  Memory: %11d" % (
                 self.reading_count,
                 reading.detector_temperature_degC,
                 spectrum_min,
@@ -266,7 +267,7 @@ class WasatchDemo(object):
 ################################################################################
 
 def signal_handler(signal, frame):
-    print('\rInterrupted by Ctrl-C...shutting down', end=' ')
+    log.info('\rInterrupted by Ctrl-C...shutting down', end=' ')
     clean_shutdown()
 
 def clean_shutdown():

@@ -12,7 +12,7 @@ def main(logger):
 
 
 if __name__ == "__main__":
-    # log_level = "WARNING"
-    log_level = "INFO"
-    logging.basicConfig(level=getattr(logging, log_level))
+    log_level = logging.DEBUG
+    message_format = u'%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
+    logging.basicConfig(level=log_level, format=message_format)
     main(log_level)
