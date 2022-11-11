@@ -4,6 +4,23 @@ import asyncio
 import julabo
 import os
 import wrapper
+import julabo
+
+
+# CONN = julabo.connection_for_url("tcp://192.168.0.101:5050")
+
+
+async def caller():
+    # dev = julabo.JulaboMS(CONN)
+    conn = julabo.connection_for_url("tcp://178.238.237.121:5050")
+    dev = julabo.JulaboMS(conn)
+
+    await dev.protocol.conn.open()
+    await dev.start()
+    await asyncio.sleep(1)
+    await dev.stop()
+    # return await dev.external_temperature()
+    return 0
 
 
 async def get_ms(jul, command):
