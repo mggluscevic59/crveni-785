@@ -2,8 +2,8 @@
 import os
 import datetime
 import logging
-import asyncio
 import subprocess
+import platform
 
 """
     ulazni podaci
@@ -39,8 +39,27 @@ def path(enum=True, timestamp=True):
 
 async def demo(logger):
     # call demo.py --help for list of parameters
-    command = ["./demo.py", "--integration-time-ms", str(INTEGRACIJSKO_VRIJEME), "--scans-to-average", str(BROJ_OCITANJA_ZA_INTERPOLACIJU), "--max", "1", "--outfile", ".buffer.csv", "--ascii-art", "--log-level", logging.getLevelName(logger)]
-    subprocess.call(command)
+    if platform.system().lower()=="windows":
+        os.system(f"demo.py --integration-time-ms={INTEGRACIJSKO_VRIJEME} \
+            --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} --max=1 \
+                --delay-ms={VREMENSKI_ODMAK} --outfile='.buffer.csv' \
+                    --ascii-art --log-level={logger}")
+    else:
+        command = [
+            "./demo.py",
+            "--integration-time-ms",
+            str(INTEGRACIJSKO_VRIJEME),
+            "--scans-to-average",
+            str(BROJ_OCITANJA_ZA_INTERPOLACIJU),
+            "--max",
+            "1",
+            "--outfile",
+            ".buffer.csv",
+            "--ascii-art",
+            "--log-level",
+            logging.getLevelName(logger)
+        ]
+        subprocess.call(command)
 
 if __name__ == "__main__":
     # log_level = "WARNING"
