@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import logging
 import asyncio
-import julabo
-import os
+# import julabo
+# import os
 import wrapper
 
 
@@ -17,13 +17,13 @@ async def get_ms(jul, command):
 
 def main(logger):
     broj_mjerenja, vremenski_odmak, izlazna_mapa = 3, 0, ".data/"
-    data_path = wrapper.path()
+    # data_path = wrapper.path()
     buffer_path = ".buffer.csv"
-    jul_1 = julabo.JulaboMS(julabo.connection_for_url("tcp://178.238.237.121:5050"))
-    logging.info(data_path)
+    # jul_1 = julabo.JulaboMS(julabo.connection_for_url("tcp://178.238.237.121:5050"))
+    # logging.info(data_path)
     asyncio.run(wrapper.demo(logger))
-    logging.info(asyncio.run(get_ms(jul_1, "identification")))
-    logging.info(asyncio.run(get_ms(jul_1, "external_temperature")))
+    # logging.info(asyncio.run(get_ms(jul_1, "identification")))
+    # logging.info(asyncio.run(get_ms(jul_1, "external_temperature")))
     for _ in range(broj_mjerenja):
         pass
         # if not os.path.exists(data_path):
