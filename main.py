@@ -1,19 +1,61 @@
 #!/usr/bin/env python
 import logging
 import asyncio
+import os
+import datetime
+import platform
+import subprocess
 
-from os.path import exists
+
 from asyncua import Client
-from asyncua.crypto.security_policies import SecurityPolicyBasic256Sha256
-import wrapper
+# from asyncua.crypto.security_policies import SecurityPolicyBasic256Sha256
 
 
 OPC_ADDR = "172.27.39.99"
+INTEGRACIJSKO_VRIJEME = 10
+BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
+BROJ_MJERENJA = 3
+VREMENSKI_ODMAK = 0
+IZLAZNA_MAPA = ".data/"
 
-def file_exists(path):
-    if exists(".certs/key.pem"):
-        return True
-    return False
+
+def path(enum=True, timestamp=True):
+    foo_path = IZLAZNA_MAPA
+
+    if timestamp:
+        foo_path += datetime.datetime.now().strftime('%Y_%m_%d')
+    if enum:
+        counter = 1
+        while os.path.exists(foo_path+"-"+str(counter)+".csv"):
+            counter += 1
+        foo_path += "-" + str(counter)
+    foo_path += ".csv"
+    return 
+
+
+async def wrapper(logger):
+    # call demo_custom.py --help for list of parameters
+    if platform.system().lower()=="windows":
+        os.system(f"demo_custom.py --integration-time-ms={INTEGRACIJSKO_VRIJEME} \
+            --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} --max=1 \
+                --delay-ms={VREMENSKI_ODMAK} --outfile='.buffer.csv' \
+                    --ascii-art --log-level={logger}")
+    else:
+        command = [
+            "./demo_custom.py",
+            "--integration-time-ms",
+            str(INTEGRACIJSKO_VRIJEME),
+            "--scans-to-average",
+            str(BROJ_OCITANJA_ZA_INTERPOLACIJU),
+            "--max",
+            "1",
+            "--outfile",
+            ".buffer.csv",
+            "--ascii-art",
+            "--log-level",
+            logging.getLevelName(logger)
+        ]
+        subprocess.call(command)
 
 
 async def temp_read():
@@ -41,14 +83,13 @@ def main(logger):
     buffer_path = ".buffer.csv"
     # jul_1 = julabo.JulaboMS(julabo.connection_for_url("tcp://178.238.237.121:5050"))
     # logging.info(data_path)
-    asyncio.run(wrapper.demo(logger))
+    asyncio.run(wrapper(logger))
     # logging.info(asyncio.run(get_ms(jul_1, "identification")))
     # logging.info(asyncio.run(get_ms(jul_1, "external_temperature")))
     for _ in range(broj_mjerenja):
         pass
 
     # logging.info(data_path)
-    # asyncio.run(wrapper.demo(logger))
     # logging.info(asyncio.run(temp_read()))
 
     # for _ in range(broj_mjerenja):
