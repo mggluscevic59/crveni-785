@@ -8,6 +8,7 @@ import subprocess
 
 
 from asyncua import Client
+import crystapp_04
 # from asyncua.crypto.security_policies import SecurityPolicyBasic256Sha256
 
 
@@ -17,20 +18,6 @@ BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
 BROJ_MJERENJA = 3
 VREMENSKI_ODMAK = 0
 IZLAZNA_MAPA = ".data/"
-
-
-def path(enum=True, timestamp=True):
-    foo_path = IZLAZNA_MAPA
-
-    if timestamp:
-        foo_path += datetime.datetime.now().strftime('%Y_%m_%d')
-    if enum:
-        counter = 1
-        while os.path.exists(foo_path+"-"+str(counter)+".csv"):
-            counter += 1
-        foo_path += "-" + str(counter)
-    foo_path += ".csv"
-    return 
 
 
 async def wrapper(logger):
@@ -79,10 +66,10 @@ async def temp_read():
 
 def main(logger):
     broj_mjerenja, vremenski_odmak, izlazna_mapa = 3, 0, ".data/"
-    # data_path = wrapper.path()
+    data_path = crystapp_04.set_filename(folder=IZLAZNA_MAPA)
     buffer_path = ".buffer.csv"
     # jul_1 = julabo.JulaboMS(julabo.connection_for_url("tcp://178.238.237.121:5050"))
-    # logging.info(data_path)
+    logging.info(data_path)
     asyncio.run(wrapper(logger))
     # logging.info(asyncio.run(get_ms(jul_1, "identification")))
     # logging.info(asyncio.run(get_ms(jul_1, "external_temperature")))
@@ -94,8 +81,9 @@ def main(logger):
 
     # for _ in range(broj_mjerenja):
     #     pass
-        # if not os.path.exists(data_path):
-        #     open(data_path, "x", encoding="UTF-8")
+    if not crystapp_04.path_exists(data_path):
+        open(data_path, "x", encoding="UTF-8")
+
             # with open(data_path, "w", encoding="UTF-8") as file:
             #     file.write(table_header)
 
