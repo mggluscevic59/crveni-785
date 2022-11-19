@@ -291,7 +291,7 @@ if __name__ == "__main__":
 
     demo = WasatchDemo(sys.argv)
     if demo.connect():
-        # Note that on Windows, Control-Break (SIGBREAK) differs from 
+        # Note that on Windows, Control-Break (SIGBREAK) differs from
         # Control-C (SIGINT); see https://stackoverflow.com/a/1364199
         log.debug("Press Control-Break to interrupt...")
         demo.run()

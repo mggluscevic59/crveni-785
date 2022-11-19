@@ -1,31 +1,34 @@
 #!/usr/bin/env python
 import logging
 import asyncio
+import time
 
 
-from crystapp_04 import wrapper, temp_read, GentleFileWriter
+from crystapp_04 import wrapper, temp_read, GentleFileWriter, BROJ_MJERENJA
 
 
-def main(logger):
-    # NOTE: call demo.py
-    buffer_path = ".buffer.csv"
-    asyncio.run(wrapper(logger, buffer_path))
-
-    # NOTE: read external temperature from opc server
-    # NOTE: julabo i.p. address - 192.168.0.101
-    opc_ip = "192.168.0.118"
-    # logging.info(asyncio.run(temp_read(logger, opc_ip)))
-    temp = asyncio.run(temp_read(logger, opc_ip))
-    # temp = "100.00"
-
-    # NOTE: buffer + temp => file
-    writer = GentleFileWriter(".data/", buffer_path)
-    with writer as file:
+def blend_in(buffer_path, temp):
+    with GentleFileWriter(".data/", buffer_path) as file:
         with open(buffer_path, "r", encoding="UTF-8") as buffer:
             spectra = buffer.readlines()[1].split(",")
             spectra[1] = temp
             file.write(",".join([str(x) for x in spectra]))
-            # file.write(buffer.readlines()[1])
+
+
+def main(logger):
+    # NOTE: julabo i.p. address - 192.168.0.101
+    buffer_path, opc_ip = ".buffer.csv", "192.168.0.118"
+    # logging.info(asyncio.run(temp_read(logger, opc_ip)))
+    # temp = "100.00"
+
+    for _ in range(BROJ_MJERENJA):
+        # NOTE: call demo.py
+        asyncio.run(wrapper(logger, buffer_path))
+        # NOTE: read external temperature from opc server
+        temp = asyncio.run(temp_read(logger, opc_ip))
+        # NOTE: buffer + temp => file
+        blend_in(buffer_path, temp)
+        time.sleep(1)
 
 
 if __name__ == "__main__":
