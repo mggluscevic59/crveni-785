@@ -11,28 +11,30 @@ from asyncua import Client
 INTEGRACIJSKO_VRIJEME = 10
 BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
 BROJ_MJERENJA = 3
-VREMENSKI_ODMAK = 0
+VREMENSKI_ODMAK = 1
 
 
 async def wrapper(logger, outfile):
     # call demo_custom.py --help for list of parameters
     if platform.system().lower()=="windows":
-        os.system(f"demo_custom.py --integration-time-ms={INTEGRACIJSKO_VRIJEME} \
-            --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} --max=1 \
-                --delay-ms={VREMENSKI_ODMAK} --outfile={outfile} \
-                    --ascii-art --log-level={logger}")
+        os.system(f"demo_custom.py  --outfile={outfile} --max=1 --delay-ms=0 \
+            --integration-time-ms={INTEGRACIJSKO_VRIJEME} --ascii-art \
+            --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} \
+            --log-level={logger}")
     else:
         command = [
             "./demo_custom.py",
-            "--integration-time-ms",
-            str(INTEGRACIJSKO_VRIJEME),
-            "--scans-to-average",
-            str(BROJ_OCITANJA_ZA_INTERPOLACIJU),
-            "--max",
-            "1",
             "--outfile",
             str(outfile),
+            "--max",
+            "1",
+            "--delay-ms",
+            "0",
+            "--integration-time-ms",
+            str(INTEGRACIJSKO_VRIJEME),
             "--ascii-art",
+            "--scans-to-average",
+            str(BROJ_OCITANJA_ZA_INTERPOLACIJU),
             "--log-level",
             logging.getLevelName(logger)
         ]

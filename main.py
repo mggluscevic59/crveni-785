@@ -4,7 +4,8 @@ import asyncio
 import time
 
 
-from crystapp_04 import wrapper, temp_read, GentleFileWriter, BROJ_MJERENJA
+from crystapp_04 import wrapper, temp_read, \
+    GentleFileWriter, BROJ_MJERENJA, VREMENSKI_ODMAK
 
 
 def blend_in(buffer_path, temp):
@@ -28,7 +29,7 @@ def main(logger):
         temp = asyncio.run(temp_read(logger, opc_ip))
         # NOTE: buffer + temp => file
         blend_in(buffer_path, temp)
-        time.sleep(1)
+        time.sleep(VREMENSKI_ODMAK)
 
 
 if __name__ == "__main__":
