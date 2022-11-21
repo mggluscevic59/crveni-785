@@ -20,14 +20,14 @@ def main(logger):
     # NOTE: julabo i.p. address - 192.168.0.101
     buffer_path, data_path, opc_ip = ".buffer.csv", ".data/", "192.168.0.118"
     # logging.info(asyncio.run(temp_read(logger, opc_ip)))
-    temp = "100.00"
+    # temp = "100.00"
     writer = GentleFileWriter(data_path, buffer_path)
 
     for _ in range(BROJ_MJERENJA):
         # NOTE: call demo.py
-        # asyncio.run(wrapper(logger, buffer_path))
+        asyncio.run(wrapper(logger, buffer_path))
         # NOTE: read external temperature from opc server
-        # temp = asyncio.run(temp_read(logger, opc_ip))
+        temp = asyncio.run(temp_read(logger, opc_ip))
         # NOTE: buffer + temp => file
         blend_in(writer, temp)
         time.sleep(VREMENSKI_ODMAK)
