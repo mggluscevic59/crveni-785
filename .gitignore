@@ -1,3 +1,7 @@
 .*
 !.gitignore
 __pycache__
+Converter.m
+Rshift.m
+Wavelengthcalculator.m
+temp.txt

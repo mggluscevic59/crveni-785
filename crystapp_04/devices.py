@@ -8,10 +8,10 @@ import subprocess
 from asyncua import Client
 
 
-INTEGRACIJSKO_VRIJEME = 10
+INTEGRACIJSKO_VRIJEME = 1*1000 # milisecond
 BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
 BROJ_MJERENJA = 3
-VREMENSKI_ODMAK = 1
+VREMENSKI_ODMAK = 1*59 # second
 
 
 async def wrapper(logger, outfile):
