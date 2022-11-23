@@ -158,6 +158,7 @@ class WasatchDemo(object):
         self.device.change_setting("integration_time_ms", self.args.integration_time_ms)
         self.device.change_setting("scans_to_average", self.args.scans_to_average)
         self.device.change_setting("detector_tec_enable", True)
+        self.device.change_setting("acquisition_laser_trigger_enable", True)
 
         # initialize outfile if one was specified
         if self.args.outfile:
