@@ -30,7 +30,7 @@ def main(logger):
         temp = asyncio.run(temp_read(logger, opc_ip))
         # NOTE: buffer + temp => file
         blend_in(writer, temp)
-        time.sleep(VREMENSKI_ODMAK)
+        time.sleep(VREMENSKI_ODMAK*0.001)
 
 
 if __name__ == "__main__":
