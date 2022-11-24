@@ -3,49 +3,22 @@ import platform
 import os
 import logging
 import subprocess
+import sys
 
 
 from asyncua import Client
+from demo_custom import WasatchDemo
 
 
-INTEGRACIJSKO_VRIJEME = 500 # milisecond
-BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
-BROJ_MJERENJA = 3
-VREMENSKI_ODMAK = 60000 # milisecond
+log = logging.getLogger(__name__)
 
 
-async def wrapper(logger, outfile):
-    # call demo_custom.py --help for list of parameters
-    if platform.system().lower()=="windows":
-        os.system(f"demo_custom.py  --outfile={outfile} --max=1 --delay-ms=0 \
-            --integration-time-ms={INTEGRACIJSKO_VRIJEME} --ascii-art \
-            --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} \
-            --log-level={logger}")
-    else:
-        command = [
-            "./demo_custom.py",
-            "--outfile",
-            str(outfile),
-            "--max",
-            "1",
-            "--delay-ms",
-            "0",
-            "--integration-time-ms",
-            str(INTEGRACIJSKO_VRIJEME),
-            "--ascii-art",
-            "--scans-to-average",
-            str(BROJ_OCITANJA_ZA_INTERPOLACIJU),
-            "--log-level",
-            logging.getLevelName(logger)
-        ]
-        subprocess.call(command)
-
-
-async def temp_read(logger, opc_ip):
+async def temp_read(opc_ip):
     url = "opc.tcp://"+opc_ip+":4840/freeopcua/server/"
     temp = None
 
     async with Client(url=url) as client:
+        log.debug("Start reading Julabo t-1000")
         # arbitrary namespace
         idx = await client.get_namespace_index(
             "urn:freeopcua:python:server"
@@ -55,5 +28,7 @@ async def temp_read(logger, opc_ip):
                 [f"{idx}:Devices", f"{idx}:JulaboMagio"]
                 )
             ).call_method(f"{idx}:External_temperature", False)
+        log.debug("temperature has been red!")
+        log.info(temp)
 
     return temp
