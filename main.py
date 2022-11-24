@@ -53,12 +53,11 @@ def main():
     # raman = class_wrapper(logger, buffer_path)
     raman = WasatchDemo(mock_argv)
 
-    if not raman.connect():
-        return
-
     for _ in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
         # NOTE: call demo.py
+        if not raman.connect():
+            return
         raman.run()
         # asyncio.run(wrapper(logger, buffer_path))
         # NOTE: read external temperature from opc server
@@ -74,4 +73,5 @@ if __name__ == "__main__":
     FORMAT = '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
+    logging.getLogger("wasatch").setLevel(logging.WARNING)
     main()
