@@ -6,12 +6,17 @@ import subprocess
 
 
 from asyncua import Client
+from demo_custom import WasatchDemo
 
 
 INTEGRACIJSKO_VRIJEME = 500 # milisecond
 BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
 BROJ_MJERENJA = 3
 VREMENSKI_ODMAK = 60000 # milisecond
+
+
+async def class_wrapper(outfile):
+    pass
 
 
 async def wrapper(logger, outfile):

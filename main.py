@@ -3,8 +3,10 @@ import logging
 import asyncio
 import time
 import datetime
+import sys
 
 
+from demo_custom import WasatchDemo
 from crystapp_04 import wrapper, temp_read, \
     GentleFileWriter, BROJ_MJERENJA, VREMENSKI_ODMAK
 
@@ -33,11 +35,17 @@ def main(logger):
     # logging.info(asyncio.run(temp_read(logger, opc_ip)))
     # temp = "100.00"
     writer = GentleFileWriter(data_path, buffer_path)
+    # Raman instance
+    raman = None
+
+    if not raman.connect():
+        return
 
     for _ in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
         # NOTE: call demo.py
-        asyncio.run(wrapper(logger, buffer_path))
+        raman.run()
+        # asyncio.run(wrapper(logger, buffer_path))
         # NOTE: read external temperature from opc server
         temp = asyncio.run(temp_read(logger, opc_ip))
         # NOTE: buffer + temp => file
