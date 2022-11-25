@@ -48,9 +48,6 @@ def main(logger):
 
 
 if __name__ == "__main__":
-    # LOG_LEVEL, MESSAGE_FORMAT = logging.INFO, \
-    #     '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
-    LOG_LEVEL, MESSAGE_FORMAT = logging.DEBUG, \
-        '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
-    logging.basicConfig(level=LOG_LEVEL, format=MESSAGE_FORMAT)
-    main(LOG_LEVEL)
+    FORMAT = '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
+    logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+    main(logging.DEBUG)
