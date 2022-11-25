@@ -50,4 +50,6 @@ def main(logger):
 if __name__ == "__main__":
     FORMAT = '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+    logging.getLogger("asyncua.client").setLevel(logging.WARNING)
+    logging.getLogger("wasatch").setLevel(logging.WARNING)
     main(logging.DEBUG)
