@@ -57,7 +57,7 @@ class WasatchDemo(object):
 
         self.args = self.parse_args(argv)
 
-        self.logger = applog.MainLogger(self.args.log_level, logfile=".wasatch_applog.txt")
+        # self.logger = applog.MainLogger(self.args.log_level, logfile=".wasatch_applog.txt")
         log.info("Wasatch.PY version %s", wasatch.__version__)
 
     @property

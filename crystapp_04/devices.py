@@ -3,15 +3,14 @@ import platform
 import os
 import logging
 import subprocess
+import sys
 
 
 from asyncua import Client
+from demo_custom import WasatchDemo
 
 
-INTEGRACIJSKO_VRIJEME = 500 # milisecond
-BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
-BROJ_MJERENJA = 3
-VREMENSKI_ODMAK = 60000 # milisecond
+log = logging.getLogger(__name__)
 
 
 async def wrapper(logger, outfile):
@@ -43,6 +42,7 @@ async def temp_read(logger, opc_ip):
     temp = None
 
     async with Client(url=url) as client:
+        log.debug("Start reading Julabo t-1000")
         # arbitrary namespace
         idx = await client.get_namespace_index(
             "urn:freeopcua:python:server"
@@ -52,5 +52,7 @@ async def temp_read(logger, opc_ip):
                 [f"{idx}:Devices", f"{idx}:JulaboMagio"]
                 )
             ).call_method(f"{idx}:External_temperature", False)
+        log.debug("temperature has been red!")
+        log.info(temp)
 
     return temp
