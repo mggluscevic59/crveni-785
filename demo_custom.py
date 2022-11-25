@@ -53,11 +53,21 @@ class WasatchDemo(object):
         self.outfile = None
         self.exiting = False
         self.reading_count = None
+        self._laser = False
 
         self.args = self.parse_args(argv)
 
         self.logger = applog.MainLogger(self.args.log_level, logfile=".wasatch_applog.txt")
         log.info("Wasatch.PY version %s", wasatch.__version__)
+
+    @property
+    def laser(self):
+        return self._laser
+
+    @laser.setter
+    def laser(self, value:bool):
+        self.device.hardware.set_laser_enable(value)
+        self._laser = value
 
     ############################################################################
     #                                                                          #
@@ -71,7 +81,6 @@ class WasatchDemo(object):
         parser.add_argument("--integration-time-ms", type=int, default=10,     help="integration time (ms, default 10)")
         parser.add_argument("--scans-to-average",    type=int, default=1,      help="scans to average (default 1)")
         parser.add_argument("--boxcar-half-width",   type=int, default=0,      help="boxcar half-width (default 0)")
-        parser.add_argument("--delay-ms",            type=int, default=1000,   help="delay between integrations (ms, default 1000)")
         parser.add_argument("--outfile",             type=str, default=None,   help="output filename (e.g. path/to/spectra.csv)")
         parser.add_argument("--max",                 type=int, default=0,      help="max spectra to acquire (default 0, unlimited)")
         parser.add_argument("--non-blocking",        action="store_true",      help="non-blocking USB interface (WasatchDeviceWrapper instead of WasatchDevice)")
@@ -141,6 +150,7 @@ class WasatchDemo(object):
         log.debug("connect: device connected")
 
         self.device = device
+        self.laser = device.hardware.get_laser_enabled()
         self.reading_count = 0
 
         return device
@@ -158,7 +168,7 @@ class WasatchDemo(object):
         self.device.change_setting("integration_time_ms", self.args.integration_time_ms)
         self.device.change_setting("scans_to_average", self.args.scans_to_average)
         self.device.change_setting("detector_tec_enable", True)
-        self.device.change_setting("acquisition_laser_trigger_enable", True)
+        # self.device.change_setting("acquisition_laser_trigger_enable", True)
 
         # initialize outfile if one was specified
         if self.args.outfile:
@@ -171,26 +181,25 @@ class WasatchDemo(object):
 
         # read spectra until user presses Control-Break
         while not self.exiting:
-            start_time = datetime.datetime.now()
+            # only place where laser is turned on & awaited (sleep)
+            self.laser = True
+            try:
+                time.sleep(10)
+            except:
+                # log.critical("WasatchDemo.run sleep() caught an exception", exc_info=1)
+                self.exiting = True
             self.attempt_reading()
-            end_time = datetime.datetime.now()
+            self.laser = False
 
+            # TODO: move to main module
             if self.args.max > 0 and self.reading_count >= self.args.max:
                 log.debug("max spectra reached, exiting")
                 self.exiting = True
-            else:
-                # compute how much longer we should wait before the next reading
-                reading_time_ms = int((end_time - start_time).microseconds / 1000)
-                sleep_ms = self.args.delay_ms - reading_time_ms
-                if sleep_ms > 0:
-                    log.debug("sleeping %d ms (%d ms already passed)", sleep_ms, reading_time_ms)
-                    try:
-                        time.sleep(float(sleep_ms) / 1000)
-                    except:
-                        # log.critical("WasatchDemo.run sleep() caught an exception", exc_info=1)
-                        self.exiting = True
 
         log.debug("WasatchDemo.run exiting")
+
+    def laser_toggle(self):
+        self.laser = not self.laser
 
     def attempt_reading(self):
         try:
@@ -273,6 +282,10 @@ def signal_handler(signal, frame):
 
 def clean_shutdown():
     log.debug("Exiting")
+
+    # precaution!
+    demo.laser = False
+
     if demo:
         if demo.args and demo.args.non_blocking and demo.device:
             log.debug("closing background thread")
