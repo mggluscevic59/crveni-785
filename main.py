@@ -46,10 +46,10 @@ async def main(log_level):
 if __name__ == "__main__":
     FORMAT = '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
     # log level
-    logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+    logging.basicConfig(level=logging.INFO, format=FORMAT)
     # logging.basicConfig(level=logging.INFO, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
     # logging.getLogger("wasatch").setLevel(logging.WARNING)
     # logging.getLogger("wasatch").setLevel(logging.INFO)
     # main(logging.DEBUG)
-    asyncio.run(main(logging.DEBUG))
+    asyncio.run(main(logging.WARNING))
