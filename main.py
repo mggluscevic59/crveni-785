@@ -17,7 +17,7 @@ def blend_in(writer, temp):
             file.write(",".join([str(x) for x in spectra]))
 
 
-def calc_wait(start:datetime, stop:datetime, delay):
+def calc_wait(start:datetime.datetime, stop:datetime.datetime, delay):
     passed = int((stop - start).microseconds*0.001)
     logging.debug(passed)
     if passed > delay:
