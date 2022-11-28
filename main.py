@@ -30,14 +30,14 @@ def calc_wait(start:datetime, stop:datetime, delay):
     return supstracted*0.001
 
 
-async def main(logger):
+async def main(log_level):
     writer = GentleFileWriter(".data/", ".buffer.csv")
 
     for _ in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
-        task1 = asyncio.create_task(temp_read(logger, OPC_TEST))
-        await wrapper(logger, writer.buffer_path)
-        blend_in(writer, task1)
+        task1 = asyncio.create_task(temp_read(log_level, OPC_TEST))
+        await wrapper(log_level, writer.buffer_path)
+        blend_in(writer, await task1)
         end_time = datetime.datetime.now()
 
         await asyncio.sleep(calc_wait(start_time, end_time, VREMENSKI_ODMAK))
@@ -49,6 +49,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)
     # logging.basicConfig(level=logging.INFO, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
-    logging.getLogger("wasatch").setLevel(logging.WARNING)
+    # logging.getLogger("wasatch").setLevel(logging.WARNING)
+    # logging.getLogger("wasatch").setLevel(logging.INFO)
     # main(logging.DEBUG)
     asyncio.run(main(logging.DEBUG))

@@ -19,8 +19,9 @@ async def wrapper(logger, outfile):
     # call demo_custom.py --help for list of parameters
     if platform.system().lower()=="windows":
         os.system(f"demo_custom.py --outfile={outfile} --max=1 --ascii-art \
-            --integration-time-ms={INTEGRACIJSKO_VRIJEME} --log-level={logger} \
-            --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} &")
+            --integration-time-ms={INTEGRACIJSKO_VRIJEME} \
+            --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} \
+            --log-level={logging.getLevelName(logger)}")
     else:
         command = [
             "./demo_custom.py",
