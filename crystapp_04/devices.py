@@ -3,6 +3,7 @@ import platform
 import os
 import logging
 import subprocess
+import asyncio
 
 
 from asyncua import Client
@@ -10,16 +11,17 @@ from asyncua import Client
 
 INTEGRACIJSKO_VRIJEME = 500 # milisecond
 BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
-BROJ_MJERENJA = 3
-VREMENSKI_ODMAK = 60000 # milisecond
+BROJ_MJERENJA = 10
+VREMENSKI_ODMAK = 30000 # milisecond
 
 
 async def wrapper(logger, outfile):
     # call demo_custom.py --help for list of parameters
     if platform.system().lower()=="windows":
         os.system(f"demo_custom.py --outfile={outfile} --max=1 --ascii-art \
-            --integration-time-ms={INTEGRACIJSKO_VRIJEME} --log-level={logger} \
-            --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU}")
+            --integration-time-ms={INTEGRACIJSKO_VRIJEME} \
+            --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} \
+            --log-level={logging.getLevelName(logger)}")
     else:
         command = [
             "./demo_custom.py",
@@ -36,6 +38,8 @@ async def wrapper(logger, outfile):
             logging.getLevelName(logger)
         ]
         subprocess.call(command)
+    # estimated time to finish julabo
+    await asyncio.sleep(1)
 
 
 async def temp_read(logger, opc_ip):
@@ -52,5 +56,7 @@ async def temp_read(logger, opc_ip):
                 [f"{idx}:Devices", f"{idx}:JulaboMagio"]
                 )
             ).call_method(f"{idx}:External_temperature", False)
+    # estimated time to finish raman
+    await asyncio.sleep(11)
 
     return temp

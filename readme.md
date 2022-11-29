@@ -19,5 +19,5 @@
 * Choose: tabulated format, click `NEXT`
 * Select [ `tab,comma` ] values & press `ADVANCED`
 * Choose: delimiter: `dot (.)` => `comma (,)`
-    - explanation: Comma separated value file helds comma (,) simbol for delimiter of data. Croatian input (differencialing from american) uses the same comma for output of number. Ergo, finall output must have comma separated numbers (i.e. 3.14 kunas) in order to be able to shown data in graph.
+    - explanation: Comma separated value file helds comma (,) simbol for delimiter of data. Croatian input (differenciating from American) uses the same comma for output of number. Ergo, finall output must have comma separated numbers (i.e. 3,14 kunas) in order to be able to shown data in graph.
 * Click `FINISH`

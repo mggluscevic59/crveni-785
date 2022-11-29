@@ -8,6 +8,9 @@ import datetime
 from crystapp_04 import wrapper, temp_read, \
     GentleFileWriter, BROJ_MJERENJA, VREMENSKI_ODMAK
 
+OPC_TEST = "178.238.237.121"
+OPC_REAL = "192.168.0.118"
+
 
 def blend_in(writer, temp):
     with writer as file:
@@ -24,32 +27,29 @@ def calc_wait(start:datetime.datetime, stop:datetime.datetime, delay):
         return 0
     supstracted = delay - passed
     logging.debug(supstracted)
-    return supstracted
+    return supstracted*0.001
 
 
-def main(logger):
-    # NOTE: julabo i.p. address - 192.168.0.101
-    buffer_path, data_path, opc_ip = ".buffer.csv", ".data/", "192.168.0.118"
-    # logging.info(asyncio.run(temp_read(logger, opc_ip)))
-    # temp = "100.00"
-    writer = GentleFileWriter(data_path, buffer_path)
+async def main(log_level):
+    writer = GentleFileWriter(".data/", ".buffer.csv")
 
     for _ in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
-        # NOTE: call demo.py
-        asyncio.run(wrapper(logger, buffer_path))
-        # NOTE: read external temperature from opc server
-        temp = asyncio.run(temp_read(logger, opc_ip))
-        # NOTE: buffer + temp => file
-        blend_in(writer, temp)
+        task1 = asyncio.create_task(temp_read(log_level, OPC_REAL))
+        await wrapper(log_level, writer.buffer_path)
+        blend_in(writer, await task1)
         end_time = datetime.datetime.now()
 
-        time.sleep(calc_wait(start_time, end_time, VREMENSKI_ODMAK)*0.001)
+        await asyncio.sleep(calc_wait(start_time, end_time, VREMENSKI_ODMAK))
 
 
 if __name__ == "__main__":
     FORMAT = '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
-    logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+    # log level
+    logging.basicConfig(level=logging.INFO, format=FORMAT)
+    # logging.basicConfig(level=logging.INFO, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
-    logging.getLogger("wasatch").setLevel(logging.WARNING)
-    main(logging.DEBUG)
+    # logging.getLogger("wasatch").setLevel(logging.WARNING)
+    # logging.getLogger("wasatch").setLevel(logging.INFO)
+    # main(logging.DEBUG)
+    asyncio.run(main(logging.WARNING))
