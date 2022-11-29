@@ -1,0 +1,5 @@
+bleak==0.19.5
+cryptography==38.0.4
+dbus-fast==1.75.1
+pyudev==0.24.0
+urllib3==1.26.13
