@@ -35,7 +35,7 @@ async def main(log_level):
 
     for _ in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
-        task1 = asyncio.create_task(temp_read(log_level, OPC_TEST))
+        task1 = asyncio.create_task(temp_read(log_level, OPC_REAL))
         await wrapper(log_level, writer.buffer_path)
         blend_in(writer, await task1)
         end_time = datetime.datetime.now()
