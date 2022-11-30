@@ -11,8 +11,8 @@ from asyncua import Client
 
 INTEGRACIJSKO_VRIJEME = 500 # milisecond
 BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
-BROJ_MJERENJA = 10
-VREMENSKI_ODMAK = 30000 # milisecond
+BROJ_MJERENJA = 3
+VREMENSKI_ODMAK = 10000 # milisecond
 
 
 async def wrapper(logger, outfile):
@@ -39,7 +39,7 @@ async def wrapper(logger, outfile):
         ]
         subprocess.call(command)
     # estimated time to finish julabo
-    await asyncio.sleep(1)
+    await asyncio.sleep(0.001)
 
 
 async def temp_read(logger, opc_ip):
@@ -57,6 +57,6 @@ async def temp_read(logger, opc_ip):
                 )
             ).call_method(f"{idx}:External_temperature", False)
     # estimated time to finish raman
-    await asyncio.sleep(11)
+    await asyncio.sleep(0.001)
 
     return temp
