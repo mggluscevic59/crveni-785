@@ -3,6 +3,7 @@ import logging
 import asyncio
 # import time
 import datetime
+import platform
 
 
 from crystapp_04 import wrapper, temp_read, \
@@ -21,7 +22,9 @@ def blend_in(writer: GentleFileWriter, temp):
             spectra[1] = temp
             # logging.info("%7.2f°C julabo t-1000", float(temp))
             logging.info("{0:7.2f}°C julabo t-1000".format(float(temp)))
-            file.write(",".join([str(x) for x in spectra])+"\n")
+            file.write(",".join([str(x) for x in spectra]))
+            if platform.system().lower()=="windows":
+                file.write("\n")
 
 
 def calc_wait(start:datetime.datetime, stop:datetime.datetime, delay):
