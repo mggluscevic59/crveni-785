@@ -11,8 +11,8 @@ from asyncua import Client
 
 INTEGRACIJSKO_VRIJEME = 500 # milisecond
 BROJ_OCITANJA_ZA_INTERPOLACIJU = 1
-BROJ_MJERENJA = 10
-VREMENSKI_ODMAK = 30000 # milisecond
+BROJ_MJERENJA = 3
+VREMENSKI_ODMAK = 10000 # milisecond
 
 
 async def wrapper(logger, outfile):

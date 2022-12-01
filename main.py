@@ -42,7 +42,7 @@ def calc_wait(start:datetime.datetime, stop:datetime.datetime, delay):
 async def main(log_level):
     writer = GentleFileWriter(".data/", ".buffer.csv")
 
-    for _ in range(BROJ_MJERENJA):
+    for i in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
         task1 = asyncio.create_task(temp_read(log_level, OPC_REAL))
         # task1 = asyncio.create_task(temp_read(log_level, OPC_TEST))
@@ -50,7 +50,9 @@ async def main(log_level):
         blend_in(writer, await task1)
         end_time = datetime.datetime.now()
 
-        await asyncio.sleep(calc_wait(start_time, end_time, VREMENSKI_ODMAK))
+        logging.debug(i, BROJ_MJERENJA)
+        if i != (BROJ_MJERENJA - 1):
+            await asyncio.sleep(calc_wait(start_time, end_time, VREMENSKI_ODMAK))
 
 
 if __name__ == "__main__":
