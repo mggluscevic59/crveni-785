@@ -26,6 +26,7 @@ import argparse
 import datetime
 import numpy
 import psutil
+import threading
 
 import wasatch
 from wasatch import utils
@@ -184,7 +185,8 @@ class WasatchDemo(object):
             # only place where laser is turned on & awaited (sleep)
             self.laser = True
             try:
-                time.sleep(10)
+                # time.sleep(10)
+                threading.Event().wait(10)
             except:
                 # log.critical("WasatchDemo.run sleep() caught an exception", exc_info=1)
                 self.exiting = True
