@@ -59,6 +59,6 @@ if __name__ == "__main__":
     # logging.basicConfig(level=logging.DEBUG, format=FORMAT)
     logging.basicConfig(level=logging.INFO, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
-    # logging.getLogger("wasatch").setLevel(logging.WARNING)
-    # logging.getLogger("wasatch").setLevel(logging.INFO)
-    asyncio.run(main(logging.WARNING))
+    # LOG_NAME = "wasatch.FeatureIdentificationDevice"
+    # logging.getLogger(LOG_NAME).setLevel(logging.CRITICAL + 1)
+    asyncio.run(main(logging.INFO))

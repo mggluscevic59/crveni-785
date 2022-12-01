@@ -249,7 +249,8 @@ class WasatchDemo(object):
             spectrum = reading.spectrum
 
         if self.args.ascii_art:
-            log.info("\n".join(wasatch.utils.ascii_spectrum(spectrum, rows=20, cols=80, x_axis=self.device.settings.wavelengths, x_unit="nm")))
+            log.info("\n"+"\n".join(wasatch.utils.ascii_spectrum(spectrum, rows=20, cols=80, x_axis=self.device.settings.wavelengths, x_unit="nm")))
+            # log.info("\n".join(wasatch.utils.ascii_spectrum(spectrum, rows=20, cols=80, x_axis=self.device.settings.wavelengths, x_unit="nm")))
         else:
             spectrum_min = numpy.amin(spectrum)
             spectrum_max = numpy.amax(spectrum)
