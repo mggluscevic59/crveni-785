@@ -23,7 +23,7 @@ def blend_in(writer: GentleFileWriter, temp):
             # logging.info("%7.2f°C julabo t-1000", float(temp))
             logging.info("{0:7.2f}°C julabo t-1000".format(float(temp)))
             file.write(",".join([str(x) for x in spectra]))
-            if platform.system().lower()=="windows":
+            if platform.system().lower()!="windows":
                 file.write("\n")
 
 
