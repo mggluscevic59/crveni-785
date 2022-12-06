@@ -8,6 +8,7 @@ import os
 import psutil
 import sys
 
+
 from crystapp_04 import wrapper, temp_read, \
     GentleFileWriter, BROJ_MJERENJA, VREMENSKI_ODMAK
 
@@ -25,8 +26,8 @@ def blend_in(writer: GentleFileWriter, temp):
             # logging.info("%7.2f°C julabo t-1000", float(temp))
             logging.info("{0:7.2f}°C julabo t-1000".format(float(temp)))
             file.write(",".join([str(x) for x in spectra]))
-            if platform.system().lower()!="windows":
-                file.write("\n")
+            # if platform.system().lower()!="windows":
+            #     file.write("\n")
 
 
 def calc_wait(start:datetime.datetime, stop:datetime.datetime, delay):
@@ -65,7 +66,8 @@ if __name__ == "__main__":
     if os_used == "win32":  # Windows (either 32-bit or 64-bit)
         process.nice(psutil.REALTIME_PRIORITY_CLASS)
     elif os_used == "linux":  # linux
-        process.nice(psutil.IOPRIO_HIGH)
+        # process.nice(psutil.IOPRIO_HIGH)
+        pass
     else:  # MAC OS X or other
         process.nice(20) 
     FORMAT = '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
