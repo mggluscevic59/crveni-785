@@ -23,21 +23,16 @@ def blend_in(writer: GentleFileWriter, temp):
             spectra = buffer.readlines()[1].split(",")
             spectra[0] = datetime.datetime.now().strftime("%H:%M:%S")
             spectra[1] = temp
-            # logging.info("%7.2f°C julabo t-1000", float(temp))
             logging.info("{0:7.2f}°C julabo t-1000".format(float(temp)))
             file.write(",".join([str(x) for x in spectra]))
-            # if platform.system().lower()!="windows":
-            #     file.write("\n")
 
 
 def calc_wait(start:datetime.datetime, stop:datetime.datetime, delay):
     passed = int((stop - start).microseconds*0.001)
-    # logging.debug("%4d miliseconds", passed)
     logging.debug("{0:5d} miliseconds".format(passed))
     if passed > delay:
         return 0
     supstracted = delay - passed
-    # logging.info("%s miliseconds async sleep", supstracted)
     logging.info(f"{supstracted} miliseconds async sleep")
     return supstracted*0.001
 
@@ -55,7 +50,7 @@ async def main(log_level):
         end_time = datetime.datetime.now()
         logging.debug("ended measurement")
 
-        logging.debug([i, BROJ_MJERENJA])
+        logging.debug("measurement: {0}/{1}".format(i+1, BROJ_MJERENJA))
         if i != (BROJ_MJERENJA - 1):
             await asyncio.sleep(calc_wait(start_time, end_time, VREMENSKI_ODMAK))
 
@@ -75,6 +70,4 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)
     # logging.basicConfig(level=logging.INFO, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
-    # LOG_NAME = "wasatch.FeatureIdentificationDevice"
-    # logging.getLogger(LOG_NAME).setLevel(logging.CRITICAL + 1)
     asyncio.run(main(logging.INFO))
