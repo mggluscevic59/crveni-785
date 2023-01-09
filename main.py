@@ -3,10 +3,10 @@ import logging
 import asyncio
 # import time
 import datetime
-import platform
-import os
-import psutil
-import sys
+# import platform
+# import os
+# import psutil
+# import sys
 
 
 from crystapp_04 import wrapper, temp_read, \
@@ -56,15 +56,15 @@ async def main(log_level):
 
 
 if __name__ == "__main__":
-    os_used = sys.platform
-    process = psutil.Process(os.getpid())  # Set highest priority for the python script for the CPU
-    if os_used == "win32":  # Windows (either 32-bit or 64-bit)
-        process.nice(psutil.REALTIME_PRIORITY_CLASS)
-    elif os_used == "linux":  # linux
-        # process.nice(psutil.IOPRIO_HIGH)
-        pass
-    else:  # MAC OS X or other
-        process.nice(20) 
+    # os_used = sys.platform
+    # process = psutil.Process(os.getpid())  # Set highest priority for the python script for the CPU
+    # if os_used == "win32":  # Windows (either 32-bit or 64-bit)
+    #     process.nice(psutil.REALTIME_PRIORITY_CLASS)
+    # elif os_used == "linux":  # linux
+    #     # process.nice(psutil.IOPRIO_HIGH)
+    #     pass
+    # else:  # MAC OS X or other
+    #     process.nice(20) 
     FORMAT = '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
     # log level
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)

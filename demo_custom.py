@@ -25,7 +25,7 @@ import logging
 import argparse
 import datetime
 import numpy
-import psutil
+# import psutil
 # import threading
 
 import wasatch
@@ -258,7 +258,7 @@ class WasatchDemo(object):
             spectrum_max = numpy.amax(spectrum)
             spectrum_avg = numpy.mean(spectrum)
             spectrum_std = numpy.std (spectrum)
-            size_in_bytes = psutil.Process(os.getpid()).memory_info().rss
+            # size_in_bytes = psutil.Process(os.getpid()).memory_info().rss
 
             log.info("Reading: %4d  Detector: %5.2f degC  Min: %8.2f  Max: %8.2f  Avg: %8.2f  StdDev: %8.2f  Memory: %11d" % (
                 self.reading_count,
@@ -266,8 +266,8 @@ class WasatchDemo(object):
                 spectrum_min,
                 spectrum_max,
                 spectrum_avg,
-                spectrum_std,
-                size_in_bytes))
+                spectrum_std))
+                # size_in_bytes))
             log.debug("%s", str(reading))
 
         if self.outfile:
