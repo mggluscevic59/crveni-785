@@ -41,7 +41,14 @@ async def main(log_level):
         logging.debug("started measurement")
         task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
         await wrapper(log_level, writer.buffer_path)
-        blend_in(writer, await task1)
+        # TODO: more sofisticated check of buffer
+        if writer.buffer_path.exists():
+            blend_in(writer, await task1)
+        else:
+            # wait for loggers, than exit
+            await task1
+            # logging.debug([writer.buffer_path.exists(), writer.buffer_path.absolute()])
+            break
         end_time = datetime.datetime.now()
         logging.debug("ended measurement")
 
