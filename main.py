@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 import logging
 import asyncio
-# import time
 import datetime
-# import platform
-# import os
-# import psutil
-# import sys
+import platform
 
 
 from crystapp_04 import wrapper, temp_read, \
@@ -43,8 +39,7 @@ async def main(log_level):
     for i in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
         logging.debug("started measurement")
-        task1 = asyncio.create_task(temp_read(log_level, OPC_REAL))
-        # task1 = asyncio.create_task(temp_read(log_level, OPC_TEST))
+        task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
         await wrapper(log_level, writer.buffer_path)
         blend_in(writer, await task1)
         end_time = datetime.datetime.now()
@@ -56,15 +51,8 @@ async def main(log_level):
 
 
 if __name__ == "__main__":
-    # os_used = sys.platform
-    # process = psutil.Process(os.getpid())  # Set highest priority for the python script for the CPU
-    # if os_used == "win32":  # Windows (either 32-bit or 64-bit)
-    #     process.nice(psutil.REALTIME_PRIORITY_CLASS)
-    # elif os_used == "linux":  # linux
-    #     # process.nice(psutil.IOPRIO_HIGH)
-    #     pass
-    # else:  # MAC OS X or other
-    #     process.nice(20) 
+    if platform.system().lower()=="windows":
+        raise Exception("Windows not supported!")
     FORMAT = '%(asctime)s [0x%(thread)08x] %(name)s %(levelname)-8s %(message)s'
     # log level
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)

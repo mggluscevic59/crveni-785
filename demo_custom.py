@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ################################################################################
-#                                   demo.py                                    #
+#                                   demo_cutom.py                              #
 ################################################################################
 #                                                                              #
 #  DESCRIPTION:  Simple cmd-line demo to confirm that Wasatch.PY is working    #
@@ -15,8 +15,7 @@
 #                $ python -u demo.py                                           #
 #                                                                              #
 ################################################################################
-
-import os
+# import os
 import re
 import sys
 import time
@@ -25,10 +24,9 @@ import logging
 import argparse
 import datetime
 import numpy
-# import psutil
-# import threading
-
 import wasatch
+
+
 from wasatch import utils
 from wasatch import applog
 from wasatch.WasatchBus           import WasatchBus
@@ -37,16 +35,16 @@ from wasatch.WasatchDevice        import WasatchDevice
 from wasatch.WasatchDeviceWrapper import WasatchDeviceWrapper
 from wasatch.RealUSBDevice        import RealUSBDevice
 
+
 log = logging.getLogger(__name__)
 
-class WasatchDemo(object):
 
+class WasatchDemo(object):
     ############################################################################
     #                                                                          #
     #                               Lifecycle                                  #
     #                                                                          #
     ############################################################################
-
     def __init__(self, argv=None):
         self.bus     = None
         self.device  = None
@@ -75,7 +73,6 @@ class WasatchDemo(object):
     #                             Command-Line Args                            #
     #                                                                          #
     ############################################################################
-
     def parse_args(self, argv):
         parser = argparse.ArgumentParser(description="Simple demo to acquire spectra from command-line interface")
         parser.add_argument("--log-level",           type=str, default="INFO", help="logging level [DEBUG,INFO,WARNING,ERROR,CRITICAL]")
@@ -258,7 +255,6 @@ class WasatchDemo(object):
             spectrum_max = numpy.amax(spectrum)
             spectrum_avg = numpy.mean(spectrum)
             spectrum_std = numpy.std (spectrum)
-            # size_in_bytes = psutil.Process(os.getpid()).memory_info().rss
 
             log.info("Reading: %4d  Detector: %5.2f degC  Min: %8.2f  Max: %8.2f  Avg: %8.2f  StdDev: %8.2f  Memory: %11d" % (
                 self.reading_count,
@@ -267,7 +263,6 @@ class WasatchDemo(object):
                 spectrum_max,
                 spectrum_avg,
                 spectrum_std))
-                # size_in_bytes))
             log.debug("%s", str(reading))
 
         if self.outfile:
@@ -287,7 +282,8 @@ def clean_shutdown():
     log.debug("Exiting")
 
     # precaution!
-    demo.laser = False
+    if demo.laser:
+        demo.laser = False
 
     if demo:
         if demo.args and demo.args.non_blocking and demo.device:
