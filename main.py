@@ -55,6 +55,9 @@ async def main(log_level):
         logging.debug("measurement: {0}/{1}".format(i+1, BROJ_MJERENJA))
         if i != (BROJ_MJERENJA - 1):
             await asyncio.sleep(calc_wait(start_time, end_time, VREMENSKI_ODMAK))
+            
+        if writer.buffer_path.exists():
+            writer.buffer_path.unlink()
 
 
 if __name__ == "__main__":
@@ -65,4 +68,5 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)
     # logging.basicConfig(level=logging.INFO, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
+    logging.getLogger("wasatch.FeatureIdentificationDevice").setLevel(logging.WARNING)
     asyncio.run(main(logging.INFO))

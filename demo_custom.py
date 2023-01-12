@@ -281,9 +281,9 @@ def signal_handler(signal, frame):
 def clean_shutdown():
     log.debug("Exiting")
 
-    # precaution!
-    if demo.laser:
-        demo.laser = False
+    # precaution! already covered by disconnect
+    # if demo.laser:
+    #     demo.laser = False
 
     if demo:
         if demo.args and demo.args.non_blocking and demo.device:
