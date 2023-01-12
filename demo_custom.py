@@ -34,6 +34,7 @@ from wasatch.OceanDevice          import OceanDevice
 from wasatch.WasatchDevice        import WasatchDevice
 from wasatch.WasatchDeviceWrapper import WasatchDeviceWrapper
 from wasatch.RealUSBDevice        import RealUSBDevice
+from wasatch.DeviceID             import DeviceID
 
 
 log = logging.getLogger(__name__)
@@ -120,11 +121,15 @@ class WasatchDemo(object):
 
         if not self.bus.device_ids:
             log.warning("No Wasatch USB spectrometers found.")
-            return
+            log.info("Using mock up device.")
+            device_id = DeviceID(label="MOCK:WP-00887:WP-00887-mock.json")
+            log.debug(hex(device_id.vid))
+            # return
+        else:
+            device_id = self.bus.device_ids[0]
+            device_id.device_type = RealUSBDevice(device_id)
 
-        device_id = self.bus.device_ids[0]
         log.debug("connect: trying to connect to %s", device_id)
-        device_id.device_type = RealUSBDevice(device_id)
 
         if self.args.non_blocking:
             # this is still buggy on MacOS
@@ -135,9 +140,10 @@ class WasatchDemo(object):
                 log_level = self.args.log_level)
         else:
             log.debug("instantiating WasatchDevice (blocking)")
-            if device_id.vid == 0x24aa:
+            if device_id.vid == 0x24aa or device_id.vid == int(str(hash(device_id.name))):
                 device = WasatchDevice(device_id)
             else:
+                log.debug("Instatiating Ocean device")
                 device = OceanDevice(device_id)
 
         o_k = device.connect()

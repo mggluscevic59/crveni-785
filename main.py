@@ -39,7 +39,8 @@ async def main(log_level):
     for i in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
         logging.debug("started measurement")
-        task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
+        task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_TEST}:4840/freeopcua/server/"))
+        # task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
         await wrapper(log_level, writer.buffer_path)
         # TODO: more sofisticated check of buffer
         if writer.buffer_path.exists():
@@ -47,6 +48,7 @@ async def main(log_level):
         else:
             # wait for loggers, than exit
             await task1
+            logging.debug("No data buffer for Raman. Exiting...")
             # logging.debug([writer.buffer_path.exists(), writer.buffer_path.absolute()])
             break
         end_time = datetime.datetime.now()
@@ -69,4 +71,4 @@ if __name__ == "__main__":
     # logging.basicConfig(level=logging.INFO, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
     logging.getLogger("wasatch.FeatureIdentificationDevice").setLevel(logging.WARNING)
-    asyncio.run(main(logging.INFO))
+    asyncio.run(main(logging.DEBUG))
