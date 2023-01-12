@@ -35,7 +35,7 @@ def calc_wait(start:datetime.datetime, stop:datetime.datetime, delay):
 
 async def main(log_level):
     writer = GentleFileWriter(".data/", ".buffer.csv")
-    
+
     # buffer should be empty
     if writer.buffer_path.exists():
         writer.buffer_path.unlink()
@@ -43,12 +43,20 @@ async def main(log_level):
     for i in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
         logging.debug("started measurement")
+
+        # TP-100 from OPC UA server & Raman 785 from usb
         # task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_TEST}:4840/freeopcua/server/"))
         task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
         await wrapper(log_level, writer.buffer_path)
-        # TODO: more sofisticated check of buffer
+
+        # check buffer writed, then write TP-100 & spectra to data file
         if writer.buffer_path.exists():
-            blend_in(writer, await task1)
+            try:
+                tp_100 = await task1
+            except:
+                logging.debug("OPC UA server unavailable. Exiting...")
+                break
+            blend_in(writer, tp_100)
         else:
             # wait for loggers, than exit
             await task1
