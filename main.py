@@ -35,12 +35,16 @@ def calc_wait(start:datetime.datetime, stop:datetime.datetime, delay):
 
 async def main(log_level):
     writer = GentleFileWriter(".data/", ".buffer.csv")
+    
+    # buffer should be empty
+    if writer.buffer_path.exists():
+        writer.buffer_path.unlink()
 
     for i in range(BROJ_MJERENJA):
         start_time = datetime.datetime.now()
         logging.debug("started measurement")
-        task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_TEST}:4840/freeopcua/server/"))
-        # task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
+        # task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_TEST}:4840/freeopcua/server/"))
+        task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
         await wrapper(log_level, writer.buffer_path)
         # TODO: more sofisticated check of buffer
         if writer.buffer_path.exists():
@@ -57,9 +61,6 @@ async def main(log_level):
         logging.debug("measurement: {0}/{1}".format(i+1, BROJ_MJERENJA))
         if i != (BROJ_MJERENJA - 1):
             await asyncio.sleep(calc_wait(start_time, end_time, VREMENSKI_ODMAK))
-            
-        if writer.buffer_path.exists():
-            writer.buffer_path.unlink()
 
 
 if __name__ == "__main__":

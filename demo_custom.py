@@ -19,11 +19,12 @@
 import re
 import sys
 import time
-import signal
-import logging
-import argparse
-import datetime
 import numpy
+import signal
+# import psutil
+import logging
+import datetime
+import argparse
 import wasatch
 
 
@@ -80,8 +81,10 @@ class WasatchDemo(object):
         parser.add_argument("--integration-time-ms", type=int, default=10,     help="integration time (ms, default 10)")
         parser.add_argument("--scans-to-average",    type=int, default=1,      help="scans to average (default 1)")
         parser.add_argument("--boxcar-half-width",   type=int, default=0,      help="boxcar half-width (default 0)")
+        # parser.add_argument("--delay-ms",            type=int, default=1000,   help="delay between integrations (ms, default 1000)")
         parser.add_argument("--outfile",             type=str, default=None,   help="output filename (e.g. path/to/spectra.csv)")
         parser.add_argument("--max",                 type=int, default=0,      help="max spectra to acquire (default 0, unlimited)")
+        parser.add_argument("--use-mock",            action="store_true",      help="use virtual device for debugging")
         parser.add_argument("--non-blocking",        action="store_true",      help="non-blocking USB interface (WasatchDeviceWrapper instead of WasatchDevice)")
         parser.add_argument("--ascii-art",           action="store_true",      help="graph spectra in ASCII")
         parser.add_argument("--version",             action="store_true",      help="display Wasatch.PY version and exit")
@@ -121,10 +124,12 @@ class WasatchDemo(object):
 
         if not self.bus.device_ids:
             log.warning("No Wasatch USB spectrometers found.")
-            log.info("Using mock up device.")
-            device_id = DeviceID(label="MOCK:WP-00887:WP-00887-mock.json")
-            log.debug(hex(device_id.vid))
-            # return
+            if self.args.use_mock:
+                log.info("Using mock up device.")
+                device_id = DeviceID(label="MOCK:WP-00887:WP-00887-mock.json")
+                log.debug(hex(device_id.vid))
+            else:
+                return
         else:
             device_id = self.bus.device_ids[0]
             device_id.device_type = RealUSBDevice(device_id)

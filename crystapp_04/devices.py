@@ -34,6 +34,7 @@ async def wrapper(log_level, outfile):
         "--ascii-art",
         "--scans-to-average",
         str(BROJ_OCITANJA_ZA_INTERPOLACIJU),
+        "--use-mock",
         "--log-level",
         logging.getLevelName(log_level)
     ]
