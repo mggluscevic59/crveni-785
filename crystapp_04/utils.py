@@ -24,10 +24,11 @@ def set_filename(file_count=True, timestamp=True, folder=""):
 
 
 def calc_wait(start:datetime.datetime, stop:datetime.datetime, delay):
-    passed = int((stop - start).microseconds*0.001)
-    logging.debug("{0:5d} miliseconds".format(passed))
-    if passed > delay:
+    diff = stop-start
+    diff_ms = int(diff.seconds*1000 + diff.microseconds*0.001)
+    logging.debug("{0:5d} miliseconds".format(diff_ms))
+    if diff_ms > delay:
         return 0
-    supstracted = delay - passed
+    supstracted = delay - diff_ms
     logging.info(f"{supstracted} miliseconds async sleep")
     return supstracted*0.001

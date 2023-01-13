@@ -36,8 +36,8 @@ async def main(log_level):
         logging.debug("started measurement")
 
         # TP-100 from OPC UA server & Raman 785 from usb
-        task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_TEST}:4840/freeopcua/server/"))
-        # task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
+        # task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_TEST}:4840/freeopcua/server/"))
+        task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
         await wrapper(log_level, writer.buffer_path)
 
         # check buffer writed, then write TP-100 & spectra to data file
@@ -70,8 +70,8 @@ if __name__ == "__main__":
         raise Exception("Windows not supported!")
 
     # log level
-    logging.basicConfig(level=logging.DEBUG, format=FORMAT)
-    # logging.basicConfig(level=logging.INFO, format=FORMAT)
+    # logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+    logging.basicConfig(level=logging.INFO, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
     logging.getLogger("wasatch.FeatureIdentificationDevice").propagate = False
 
