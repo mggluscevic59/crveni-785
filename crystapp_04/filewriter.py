@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import pathlib
+import os
 
-from crystapp_04 import set_filename
+from crystapp_04 import set_filename, path_exists
 
 class GentleFileWriter:
     def __init__(self, folder, buffer, filename=None):
@@ -15,8 +16,15 @@ class GentleFileWriter:
     def exists(self):
         return self.data_path.is_file()
 
+    def has_parent(self):
+        if path_exists(self.data_path.parent):
+            return True
+        return
+
     def _add_header(self):
         if not self.exists():
+            if not self.has_parent():
+                os.mkdir(self.data_path.parent)
             with open(self.data_path, "w+", encoding="UTF-8") as file:
                 with open(self.buffer_path, "r", encoding="UTF-8") as buffer:
                     file.write(buffer.readline())

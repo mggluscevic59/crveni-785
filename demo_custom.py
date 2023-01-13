@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ################################################################################
-#                                   demo.py                                    #
+#                                   demo_cutom.py                              #
 ################################################################################
 #                                                                              #
 #  DESCRIPTION:  Simple cmd-line demo to confirm that Wasatch.PY is working    #
@@ -15,20 +15,19 @@
 #                $ python -u demo.py                                           #
 #                                                                              #
 ################################################################################
-
-import os
+# import os
 import re
 import sys
 import time
-import signal
-import logging
-import argparse
-import datetime
 import numpy
-import psutil
-# import threading
-
+import signal
+# import psutil
+import logging
+import datetime
+import argparse
 import wasatch
+
+
 from wasatch import utils
 from wasatch import applog
 from wasatch.WasatchBus           import WasatchBus
@@ -36,17 +35,18 @@ from wasatch.OceanDevice          import OceanDevice
 from wasatch.WasatchDevice        import WasatchDevice
 from wasatch.WasatchDeviceWrapper import WasatchDeviceWrapper
 from wasatch.RealUSBDevice        import RealUSBDevice
+from wasatch.DeviceID             import DeviceID
+
 
 log = logging.getLogger(__name__)
 
-class WasatchDemo(object):
 
+class WasatchDemo(object):
     ############################################################################
     #                                                                          #
     #                               Lifecycle                                  #
     #                                                                          #
     ############################################################################
-
     def __init__(self, argv=None):
         self.bus     = None
         self.device  = None
@@ -75,15 +75,16 @@ class WasatchDemo(object):
     #                             Command-Line Args                            #
     #                                                                          #
     ############################################################################
-
     def parse_args(self, argv):
         parser = argparse.ArgumentParser(description="Simple demo to acquire spectra from command-line interface")
         parser.add_argument("--log-level",           type=str, default="INFO", help="logging level [DEBUG,INFO,WARNING,ERROR,CRITICAL]")
         parser.add_argument("--integration-time-ms", type=int, default=10,     help="integration time (ms, default 10)")
         parser.add_argument("--scans-to-average",    type=int, default=1,      help="scans to average (default 1)")
         parser.add_argument("--boxcar-half-width",   type=int, default=0,      help="boxcar half-width (default 0)")
+        # parser.add_argument("--delay-ms",            type=int, default=1000,   help="delay between integrations (ms, default 1000)")
         parser.add_argument("--outfile",             type=str, default=None,   help="output filename (e.g. path/to/spectra.csv)")
         parser.add_argument("--max",                 type=int, default=0,      help="max spectra to acquire (default 0, unlimited)")
+        parser.add_argument("--use-mock",            action="store_true",      help="use virtual device for debugging")
         parser.add_argument("--non-blocking",        action="store_true",      help="non-blocking USB interface (WasatchDeviceWrapper instead of WasatchDevice)")
         parser.add_argument("--ascii-art",           action="store_true",      help="graph spectra in ASCII")
         parser.add_argument("--version",             action="store_true",      help="display Wasatch.PY version and exit")
@@ -123,11 +124,17 @@ class WasatchDemo(object):
 
         if not self.bus.device_ids:
             log.warning("No Wasatch USB spectrometers found.")
-            return
+            if self.args.use_mock:
+                log.info("Using mock up device.")
+                device_id = DeviceID(label="MOCK:WP-00887:WP-00887-mock.json")
+                log.debug(hex(device_id.vid))
+            else:
+                return
+        else:
+            device_id = self.bus.device_ids[0]
+            device_id.device_type = RealUSBDevice(device_id)
 
-        device_id = self.bus.device_ids[0]
         log.debug("connect: trying to connect to %s", device_id)
-        device_id.device_type = RealUSBDevice(device_id)
 
         if self.args.non_blocking:
             # this is still buggy on MacOS
@@ -138,9 +145,10 @@ class WasatchDemo(object):
                 log_level = self.args.log_level)
         else:
             log.debug("instantiating WasatchDevice (blocking)")
-            if device_id.vid == 0x24aa:
+            if device_id.vid == 0x24aa or device_id.vid == int(str(hash(device_id.name))):
                 device = WasatchDevice(device_id)
             else:
+                log.debug("Instatiating Ocean device")
                 device = OceanDevice(device_id)
 
         o_k = device.connect()
@@ -258,7 +266,6 @@ class WasatchDemo(object):
             spectrum_max = numpy.amax(spectrum)
             spectrum_avg = numpy.mean(spectrum)
             spectrum_std = numpy.std (spectrum)
-            size_in_bytes = psutil.Process(os.getpid()).memory_info().rss
 
             log.info("Reading: %4d  Detector: %5.2f degC  Min: %8.2f  Max: %8.2f  Avg: %8.2f  StdDev: %8.2f  Memory: %11d" % (
                 self.reading_count,
@@ -266,8 +273,7 @@ class WasatchDemo(object):
                 spectrum_min,
                 spectrum_max,
                 spectrum_avg,
-                spectrum_std,
-                size_in_bytes))
+                spectrum_std))
             log.debug("%s", str(reading))
 
         if self.outfile:
@@ -286,8 +292,9 @@ def signal_handler(signal, frame):
 def clean_shutdown():
     log.debug("Exiting")
 
-    # precaution!
-    demo.laser = False
+    # precaution! already covered by disconnect
+    # if demo.laser:
+    #     demo.laser = False
 
     if demo:
         if demo.args and demo.args.non_blocking and demo.device:
