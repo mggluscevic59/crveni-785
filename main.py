@@ -73,6 +73,6 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format=FORMAT)
     # logging.basicConfig(level=logging.INFO, format=FORMAT)
     logging.getLogger("asyncua.client").setLevel(logging.WARNING)
-    logging.getLogger("wasatch.FeatureIdentificationDevice").setLevel(logging.WARNING)
+    logging.getLogger("wasatch.FeatureIdentificationDevice").propagate = False
 
     asyncio.run(main(logging.INFO))
