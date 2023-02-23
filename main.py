@@ -39,6 +39,7 @@ async def main(log_level):
         # task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_TEST}:4840/freeopcua/server/"))
         task1 = asyncio.create_task(temp_read(f"opc.tcp://{OPC_REAL}:4840/freeopcua/server/"))
         await wrapper(log_level, writer.buffer_path)
+        # await wrapper(log_level, writer.buffer_path, mock=True)
 
         # check buffer writed, then write TP-100 & spectra to data file
         if writer.buffer_path.exists():

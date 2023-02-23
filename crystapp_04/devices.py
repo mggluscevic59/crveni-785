@@ -15,14 +15,7 @@ BROJ_MJERENJA = 60
 VREMENSKI_ODMAK = 30000 # milisecond
 
 
-async def wrapper(log_level, outfile):
-    # call demo_custom.py --help for list of parameters
-    # if platform.system().lower()=="windows":
-    #     os.system(f"demo_custom.py --outfile={outfile} --max=1 --ascii-art \
-    #         --integration-time-ms={INTEGRACIJSKO_VRIJEME} \
-    #         --scans-to-average={BROJ_OCITANJA_ZA_INTERPOLACIJU} \
-    #         --log-level={logging.getLevelName(logger)}")
-    # else:
+async def wrapper(log_level, outfile, mock=False):
     command = [
         "./demo_custom.py",
         "--outfile",
@@ -34,10 +27,11 @@ async def wrapper(log_level, outfile):
         "--ascii-art",
         "--scans-to-average",
         str(BROJ_OCITANJA_ZA_INTERPOLACIJU),
-        "--use-mock",
         "--log-level",
         logging.getLevelName(log_level)
     ]
+    if mock:
+        command.append("--use-mock")
     subprocess.call(command)
     # estimated time to finish julabo
     await asyncio.sleep(0.001)

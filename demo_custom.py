@@ -183,7 +183,8 @@ class WasatchDemo(object):
         if self.args.outfile:
             try:
                 self.outfile = open(self.args.outfile, "w", encoding="utf-8")
-                self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavelengths))
+                self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavenumbers))
+                # self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavelengths))
             except:
                 log.error("Error initializing %s", self.args.outfile)
                 self.outfile = None
