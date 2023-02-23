@@ -184,8 +184,8 @@ class WasatchDemo(object):
             try:
                 self.outfile = open(self.args.outfile, "w", encoding="utf-8")
                 # TODO: add two more columns & one args => concentration & existing: integration time
-                self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavenumbers))
-                # self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavelengths))
+                # self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavenumbers))
+                self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavelengths))
             except:
                 log.error("Error initializing %s", self.args.outfile)
                 self.outfile = None
@@ -262,6 +262,7 @@ class WasatchDemo(object):
 
         if self.args.ascii_art:
             log.info("\n"+"\n".join(wasatch.utils.ascii_spectrum(spectrum, rows=20, cols=80, x_axis=self.device.settings.wavelengths, x_unit="nm")))
+            # log.info("\n"+"\n".join(wasatch.utils.ascii_spectrum(spectrum, rows=20, cols=80, x_axis=self.device.settings.wavenumbers, x_unit="nm")))
             # log.info("\n".join(wasatch.utils.ascii_spectrum(spectrum, rows=20, cols=80, x_axis=self.device.settings.wavelengths, x_unit="nm")))
         else:
             spectrum_min = numpy.amin(spectrum)
