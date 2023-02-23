@@ -183,6 +183,7 @@ class WasatchDemo(object):
         if self.args.outfile:
             try:
                 self.outfile = open(self.args.outfile, "w", encoding="utf-8")
+                # TODO: add two more columns & one args => concentration & existing: integration time
                 self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavenumbers))
                 # self.outfile.write("time,temp,%s\n" % ",".join(format(x, ".2f") for x in self.device.settings.wavelengths))
             except:
@@ -278,6 +279,7 @@ class WasatchDemo(object):
             log.debug("%s", str(reading))
 
         if self.outfile:
+            # FIXME: only one reading buffer; [1] integration time, [2] timestamp, [3] concetration [4] temperature <- args?
             self.outfile.write("%s,%.2f,%s\n" % (datetime.datetime.now(),
                                                  reading.detector_temperature_degC,
                                                  ",".join(format(x, ".2f") for x in spectrum)))
